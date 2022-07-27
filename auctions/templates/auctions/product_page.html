@@ -1,0 +1,127 @@
+{% extends "auctions/layout.html" %}
+{% load static %}
+
+{% block body %}
+<div class="container">
+    <h2 class="text-success"> {{listing.0.listing_name | title}}</h2>
+    <div class="row">
+        {% for li in listing %}
+        <div class="col-md-8 col-12 ">
+            <img src="/static/uploadedfile/{{li.listing_image}}" height="100%" width="100%"></img>
+        </div>
+        <div class="col-md-4 col-12 ">
+            <table class="table table-success w-auto">
+                <tbody>
+                    <tr>
+                        <th scope="row">Description</th>
+                        <td>{{li.listing_detail | capfirst}}</td>
+
+                    </tr>
+                    <tr>
+                        <th scope="row">Category</th>
+                        <td>{{li.category}}</td>
+
+                    </tr>
+                    <tr>
+                        <th scope="row">Starting Price</th>
+                        <td>{{li.listing_bid}}</td>
+
+                    </tr>
+                    <tr>
+                        <th scope="row">Created by</th>
+                        <td>{{li.user}}</td>
+                    </tr>
+                    <tr>
+                        <th scope="row">Date Created</th>
+                        <td>{{li.pub_date}}</td>
+                    </tr>
+                    {%if li.is_listing_active == False %}
+                    <tr>
+
+                        <th scope="row">winner is</th>
+                        <td>{{high_bid.user}}</td>
+                    </tr>
+                    {%endif%}
+
+                </tbody>
+            </table>
+            <p class="text-danger lead"> Bidding has closed</p>
+            <div>
+                <form action="{% url 'auctions:addbid' li.id %}" method="POST">
+                    {%csrf_token%}
+                    <div class="col-12 m-3">
+                        {{bidform}}
+                        <button type="submit">place bid</button>
+                        <p class="">
+                            <span class="  lead text-danger">
+                                Bid has to be higher than the already placed bid
+                            </span>
+                        </p>
+                    </div>
+                </form>
+                <a class=" button col-3 m-3" href="{% url  'auctions:addwatchlist' li.id%}">
+                    Add to WatchList
+                </a>
+                {% if user == li.user%}
+                <a class=" button col-3" href="{% url  'auctions:closelisting' li.id%}">
+                    Close this listing
+                </a>
+                {%endif%}
+            </div>
+        </div>
+    </div>
+
+</div>
+<hr />
+
+<div class="container">
+    <h3 class="lead">Already placed bids</h3>
+    <table class="table table-success w-auto">
+        <tbody>
+            {% for b in li.bid_set.all reversed%}
+            <tr>
+                <th scope="row"> {{b.user}}</th>
+                <td> {{b.bid}}</td>
+            </tr>
+            {%empty%}
+            no bid placed yet.
+            {% endfor%}
+        </tbody>
+
+    </table>
+
+</div>
+<hr />
+
+<div class="container">
+    <h3 class="lead">Comment</h3>
+    {% for comment in li.comment_set.all %}
+    <p class="text-break"> <span class=" bg-secondary lead text-white"> {{comment.user}}</span>
+        {{comment.comment_text}}</p>
+    {%empty%}
+    no comment. (add comment)
+    {% endfor%}
+</div>
+<hr />
+<div class="container">
+    <form action="{% url 'auctions:comment' li.id %}" method="POST">
+        {%csrf_token%}
+        <fieldset>
+            {% for f in commentform %}
+            <div class="col-6 m-3">
+                <div>
+                    {{f.label}}:
+                </div>
+                {{f}}
+            </div>
+            {%endfor%}
+        </fieldset>
+        <button type="submit">Add comment</button>
+    </form>
+</div>
+{%empty%}
+<li>Page don't exist
+    <span><a href='{% url "auctions:addlisting"%}'>Add Listing</a></span>
+</li>
+{%endfor%}
+{%endblock%}

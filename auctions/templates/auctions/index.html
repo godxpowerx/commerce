@@ -1,0 +1,36 @@
+{% extends "auctions/layout.html" %}
+{% load static %}
+
+{% block body %}
+<h2>Active Listings</h2>
+<div class="container">
+        {% for li in listing %}
+        {%if li.is_listing_active%}
+    <div class="row">
+ 
+        <div class="col-6 col-md-6">
+            <a href="{% url 'auctions:product_page' li.id %}">
+                <img src="/static/uploadedfile/{{li.listing_image}}" height="100%" width="100%"></img>
+        </div>
+        <div class="col-6 col-md-6">
+            <ul>
+                <li> id:-> {{li.id}}</li>
+                <li> title:-> {{li.listing_name}}</li>
+                <li> price:->{{li.listing_bid}}</li>
+                <li>detail:->{{li.listing_detail}}</li>
+                <li>date created:->{{li.pub_date}}</li>
+                <li>who posted this product:->{{li.user}}</li>
+            </ul>
+            </a>
+        </div>
+        </div>
+        {%endif%}
+        {%empty%}
+        <li>No Listing avalaible now..
+            <span><a href='{% url "auctions:addlisting"%}'>add product</a></span>
+        </li>
+        <hr />
+        {%endfor%}
+</div>
+
+{% endblock %}

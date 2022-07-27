@@ -1,0 +1,36 @@
+{% extends "auctions/layout.html" %}
+{% load static %}
+
+{% block body %}
+
+<div class="container">
+    {% for w in watch_list%}
+    <a href="{% url 'auctions:removewatch' w.id%}">Remove</a>
+    <a href="{% url 'auctions:product_page' w.listing.id%}">
+        <div class="row">
+        <div class="col-4">
+            <img src="/static/uploadedfile/{{w.listing.listing_image}}" height="100%" width="100%"></img>
+        </div>
+        <div class="col-8">
+
+            <table class="table table-success w-auto">
+                <tbody>
+                    <tr>
+                        <td>{{w.listing.listing_name}}</td>
+                    </tr>
+                    <tr>
+                        <td>{{w.listing.listing_bid}}</td>
+                    </tr>
+                </tbody>
+            </table>
+        </div>
+    </div>
+    </a>
+    {% empty%}
+    <p> Add listing to your watchlist to see them here</p>
+  
+    {%endfor%}
+</div>
+
+
+{%endblock%}
